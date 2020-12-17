@@ -5,9 +5,10 @@ from Version.Camera_Version import *
 from Model.CAN_Structure import *
 from Model.CAN_Analysis import *
 from Model.CAN_Parameter_Set import *
-from canlib import kvadblib
+# from canlib import kvadblib
 from Model.CAN_Receive import *
 from Model.CAN_Coordinate import *
+import cantools
 import threading
 import csv
 import time
@@ -108,7 +109,7 @@ class MainWindows(QWidget):
         '''这里要注意，Dll文件的路径，如果把MainWindow放在工程上层目录的话，这里的就只用./'''
         self.CANlib = windll.LoadLibrary('./lib/ControlCAN_Red.dll')
         '''加载Kvasaer解析DBC'''
-        self.DBC = kvadblib.Dbc(filename= self.DBC_Path)
+        self.DBC = cantools.database.load_file(self.DBC_Path)
         '''设置CAN的通道和波特率'''
         self.nCANInd = int(self.CAN_Channel.Channel_Line.text())
         self.TIMER0 = int(self.CAN_Channel.Timer0_Line.text(), 16)
