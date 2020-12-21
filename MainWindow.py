@@ -13,6 +13,13 @@ import threading
 import csv
 import time
 
+## ros
+import rospy
+from sensor_msgs.msg import CompressedImage
+from sensor_msgs.msg import Imag
+#import frame.msg
+
+
 class MainWindows(QWidget):
     '''
     OpenCAN: CAN设备是否打开标志位，0：否，1：是；
