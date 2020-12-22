@@ -17,7 +17,8 @@ import time
 import rospy
 from sensor_msgs.msg import CompressedImage
 from sensor_msgs.msg import Image
-from me_vis.msg import can_info
+# from me_vis.msg import can_info
+from can_msgs.msg import can_info
 #import frame.msg
 
 
@@ -48,6 +49,19 @@ class MainWindows(QWidget):
         self.Signal_Def()
 
     def SetUI(self):
+
+                # self.Can_Cb(data)
+        self.DBC_Path = '/home/jerry/Documents/ME/Mobileye1.dbc'
+        self.OBSTACLE_DBC_Path = '/home/jerry/Documents/ME/Mobileye1.dbc'
+        self.LANE_DBC_Path = '/home/jerry/Documents/ME/new/meLanes3_v3.dbc'
+        self.LANE_RE_DBC_Path = '/home/jerry/Documents/ME/meLanes_RE.dbc'
+        self.TSR_DBC_Path = '/home/jerry/Documents/ME/new/meTSR3_v5.1.dbc'
+
+        self.image = Image()
+        self.image_np = np.zeros((1200, 1920, 3), dtype=np.uint8)
+        self.can_msg = can_info()
+ 
+        # print("--------------------test")
         self.resize(1144,850)
         self.setWindowTitle('Mobileye Sight')
         self.setWindowIcon(QIcon('./Pic/Logo.jpg'))
@@ -57,21 +71,15 @@ class MainWindows(QWidget):
         self.CAN_Presetting = CAN_Presetting()
         self.CAN_FigurePlot = CAN_FigurePlot()
         self.Camera_Version = Camera_Version()
+        # self.Camera_Version = Camera_Version(self.image_np)
         self.HB.addWidget(self.Camera_Version)
         self.HB.addWidget(self.CAN_Presetting)
         self.VB.addLayout(self.HB)
         self.VB.addWidget(self.CAN_FigurePlot)
         self.setLayout(self.VB)
-        # self.Can_Cb(data)
-        self.DBC_Path = '/home/jerry/Documents/ME/Mobileye1.dbc'
-        self.OBSTACLE_DBC_Path = '/home/jerry/Documents/ME/Mobileye1.dbc'
-        self.LANE_DBC_Path = '/home/jerry/Documents/ME/new/meLanes3_v3.dbc'
-        self.LANE_RE_DBC_Path = '/home/jerry/Documents/ME/meLanes_RE.dbc'
-        self.TSR_DBC_Path = '/home/jerry/Documents/ME/new/meTSR3_v5.1.dbc'
-        self.can_msg = can_info()
+
         self.ROS_Msg_Sub()
         self.Ros_Receive_Set()
-        print("--------------------test")
         
 
     def Signal_Def(self):
@@ -180,6 +188,9 @@ class MainWindows(QWidget):
         threading.Thread(target=self.CAN_Msg_Receive).start()
 
     def Image_Cb(self, img_msg):
+        # np_arr = np.frombuffer(img_msg.data, np.uint8)
+        # self.image_np = cv2.imdecode(np_arr, cv2.IMREAD_COLOR)
+        # print(image_np.shape)
         pass
     def Can_Cb(self, can_msg):
         # print(type(can_msg))
@@ -189,7 +200,7 @@ class MainWindows(QWidget):
         pass
     def ROS_Msg_Sub(self):
         rospy.init_node("CAN_ROS", anonymous=True)
-        # rospy.Subscriber('/usb_cam/image_raw', Image, self.Image_Cb)
+        # rospy.Subscriber('/usb_cam/image_raw/compressed', CompressedImage, self.Image_Cb)
         # rospy.Subscriber('/can_first', can_info, self.Can_Cb)
         rospy.Subscriber('/can_second', can_info, self.Can_Cb)
 
@@ -227,7 +238,7 @@ class MainWindows(QWidget):
         if self.Result[0] in self.CAN_FigurePlot.Obstacle.CAN_Obstacle_ID[:, 0]:
             '''所有障碍物报文都在这里解析'''
             self.Signal_Obstacle = CAN_Msg_Analysis().analysis(self.Result[0], bytearray(self.Result[1]), self.OBSTACLE_DBC)
-            print(self.Signal_Obstacle)
+            # print(self.Signal_Obstacle)
             '''因为障碍物报文不区分车和行人，但是障碍物的ID是固定的，一个ID只能对应一个人或者障碍物'''
             self.Index = int(float(self.Signal_Obstacle['ObstacleID']))
             '''首先处理人的报文'''
@@ -241,8 +252,8 @@ class MainWindows(QWidget):
                 坐标向量中。'''
                 self.Data_Ped_Counter[self.Index, 1] = self.Data_Ped_Counter[self.Index, 0]
                 self.Data_Ped_Counter[self.Index, 0] += 1
-                self.CAN_FigurePlot.Obstacle.Ped_X[self.Index] = float(self.Signal_Obstacle['Obstacle_Position_X'])
-                self.CAN_FigurePlot.Obstacle.Ped_Y[self.Index] = float(self.Signal_Obstacle['Obstacle_Position_Y'])
+                self.CAN_FigurePlot.Obstacle.Ped_X[self.Index] = float(self.Signal_Obstacle['ObstaclePosX'])
+                self.CAN_FigurePlot.Obstacle.Ped_Y[self.Index] = float(self.Signal_Obstacle['ObstaclePosY'])
 
                 '''对于车辆也是一样的处理方法'''
             elif self.Signal_Obstacle['ObstacleType'] == 'vehicle' or self.Signal_Obstacle['ObstacleType'] == 'truck':
