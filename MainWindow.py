@@ -188,8 +188,8 @@ class MainWindows(QWidget):
         threading.Thread(target=self.CAN_Msg_Receive).start()
 
     def Image_Cb(self, img_msg):
-        # np_arr = np.frombuffer(img_msg.data, np.uint8)
-        # self.image_np = cv2.imdecode(np_arr, cv2.IMREAD_COLOR)
+        np_arr = np.frombuffer(img_msg.data, np.uint8)
+        self.image_np = cv2.imdecode(np_arr, cv2.IMREAD_COLOR)
         # print(image_np.shape)
         pass
     def Can_Cb(self, can_msg):
@@ -200,7 +200,7 @@ class MainWindows(QWidget):
         pass
     def ROS_Msg_Sub(self):
         rospy.init_node("CAN_ROS", anonymous=True)
-        # rospy.Subscriber('/usb_cam/image_raw/compressed', CompressedImage, self.Image_Cb)
+        rospy.Subscriber('/usb_cam/image_raw/compressed', CompressedImage, self.Image_Cb)
         # rospy.Subscriber('/can_first', can_info, self.Can_Cb)
         rospy.Subscriber('/can_second', can_info, self.Can_Cb)
 
@@ -377,6 +377,7 @@ class MainWindows(QWidget):
             res = QMessageBox.warning(self, 'MESSAGE', 'PLEASE ENSURE CORRECT PC IP:\n192.168.1.x', \
                                       QMessageBox.Yes | QMessageBox.No, QMessageBox.No)
             if res == QMessageBox.Yes:
+                # print(self.image_np)
                 self.Camera_Version.Vedio_Running_Indicator = 'Yes'
                 self.Camera_Version.Open_Vedio_Initial()
                 self.Camera_Version.Timer_Start()
