@@ -37,7 +37,8 @@ class Camera_Version(QWidget):
     def Open_Vedio_Initial(self):
         # url = "rtsp://192.168.1.10:554/user=admin&password=admin&channel=1&stream=0.sdp?"
         # self.cap = cv2.VideoCapture(url)
-        self.cap = cv2.VideoCapture(1)
+        self.cap = cv2.VideoCapture(0)
+        print(type(self.cap))
 
     def Timer_Start(self):
         threading.Thread(target=self.Vedio_Show).start()

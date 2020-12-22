@@ -16,7 +16,8 @@ import time
 ## ros
 import rospy
 from sensor_msgs.msg import CompressedImage
-from sensor_msgs.msg import Imag
+from sensor_msgs.msg import Image
+from me_vis.msg import can_info
 #import frame.msg
 
 
@@ -28,7 +29,8 @@ class MainWindows(QWidget):
     Data_Veh_Counter：用于对车辆报文的计数，判断车辆识别是否在持续；
     Record_Data_Indicator：是否记录数据；
     '''
-    OpenCAN = 'No'
+    # OpenCAN = 'No'
+    OpenCAN = 'Yes'
     Thread_Msg_Ped_Rec_Indicator = 'Stop'
     Record_Data_Indicator = 'No'
     '''判断行人和车辆是否还存在的计数器'''
@@ -39,6 +41,7 @@ class MainWindows(QWidget):
     Data_Number = 5000#1000000
     def __init__(self,parent=None):
         super(MainWindows,self).__init__(parent)
+
         '''绘制主窗口'''
         self.SetUI()
         '''定义的信号与槽'''
@@ -59,6 +62,17 @@ class MainWindows(QWidget):
         self.VB.addLayout(self.HB)
         self.VB.addWidget(self.CAN_FigurePlot)
         self.setLayout(self.VB)
+        # self.Can_Cb(data)
+        self.DBC_Path = '/home/jerry/Documents/ME/Mobileye1.dbc'
+        self.OBSTACLE_DBC_Path = '/home/jerry/Documents/ME/Mobileye1.dbc'
+        self.LANE_DBC_Path = '/home/jerry/Documents/ME/new/meLanes3_v3.dbc'
+        self.LANE_RE_DBC_Path = '/home/jerry/Documents/ME/meLanes_RE.dbc'
+        self.TSR_DBC_Path = '/home/jerry/Documents/ME/new/meTSR3_v5.1.dbc'
+        self.can_msg = can_info()
+        self.ROS_Msg_Sub()
+        self.Ros_Receive_Set()
+        print("--------------------test")
+        
 
     def Signal_Def(self):
         '''初始CAN的信号'''
@@ -81,7 +95,7 @@ class MainWindows(QWidget):
         self.CAN_Presetting.Signal_Record_Video.connect(self.Record_Vedio)
         self.CAN_Presetting.Signal_Save_Video.connect(self.Save_Vedio)
         '''设置完CAN参数后的信号'''
-        self.CAN_Channel.Signal_Save.connect(self.Save_CAN_Setting)
+        self.CAN_Channel.Signal_Save.connect(self.Ros_Receive_Set)
         self.CAN_Channel.Signal_Cancel.connect(self.Reset_CAN_Setting)
 
 
@@ -89,6 +103,7 @@ class MainWindows(QWidget):
     def Load_DBC_Path(self):
         self.CAN_Presetting.Line_Load_DBC.clear()
         openfile_name = QFileDialog.getOpenFileName(self, 'SELECT DBC FILE','./')
+
         if openfile_name[0].split('.')[-1:][0] == 'dbc':
             self.DBC_Path = openfile_name[0]
             self.CAN_Presetting.Line_Load_DBC.setText(self.DBC_Path)
@@ -116,6 +131,7 @@ class MainWindows(QWidget):
         '''这里要注意，Dll文件的路径，如果把MainWindow放在工程上层目录的话，这里的就只用./'''
         self.CANlib = windll.LoadLibrary('./lib/ControlCAN_Red.dll')
         '''加载Kvasaer解析DBC'''
+        print(type(self.DBC_Path))
         self.DBC = cantools.database.load_file(self.DBC_Path)
         '''设置CAN的通道和波特率'''
         self.nCANInd = int(self.CAN_Channel.Channel_Line.text())
@@ -130,7 +146,6 @@ class MainWindows(QWidget):
         self.CAN_Device = CAN_Device_Set(nDeviceType=4, nDeviceInd=0, nReserved=0, nCANInd=self.nCANInd)
         self.CAN = CAN_Rec(self.CANlib, self.CAN_Device.nDeviceType, self.CAN_Device.nDeviceInd, \
                            self.CAN_Device.nCANInd, self.CAN_Device.nReserved, self.vic)
-
         '''判断CAN设备是否初始完成并打开，如果打开，将标志位OpenCAN 设置为Yes'''
         if self.CAN.CAN_INITIAL_Result()[0] == 1:
             self.CAN_Presetting.Line_Ini_CAN.setText(self.CAN.CAN_INITIAL_Result()[1])
@@ -148,6 +163,36 @@ class MainWindows(QWidget):
             self.CAN_Presetting.Line_Close_CAN.setText('CAN DEVICE NOT OPEN ')
             self.OpenCAN = 'No'
 
+
+    def Ros_Receive_Set(self):
+        '''加载cantools解析DBC'''
+        self.OBSTACLE_DBC = cantools.database.load_file(self.OBSTACLE_DBC_Path)
+        self.LANE_DBC = cantools.database.load_file(self.LANE_DBC_Path)
+        self.LANE_RE_DBC = cantools.database.load_file(self.LANE_RE_DBC_Path)
+        self.TSR_DBC = cantools.database.load_file(self.TSR_DBC_Path)
+        self.CAN = CAN_Rec_Ros(self.can_msg)
+        '''画出摄像头原点'''
+        self.CAN_FigurePlot.Original()
+        '''接收行人报文的线程开启,如果CAN设备初始化完成并打开，把线程标志位Thread_Msg_Ped_Rec_Indicator设为'Start'，
+        同时开启行人报文接收的线程'''
+        self.Thread_Msg_Ped_Rec_Indicator = 'Start'
+        '''开启CAN报文接收的线程'''
+        threading.Thread(target=self.CAN_Msg_Receive).start()
+
+    def Image_Cb(self, img_msg):
+        pass
+    def Can_Cb(self, can_msg):
+        # print(type(can_msg))
+        # print(can_msg.id)
+        # print(can_msg.data)
+        self.can_msg = can_msg
+        pass
+    def ROS_Msg_Sub(self):
+        rospy.init_node("CAN_ROS", anonymous=True)
+        # rospy.Subscriber('/usb_cam/image_raw', Image, self.Image_Cb)
+        # rospy.Subscriber('/can_first', can_info, self.Can_Cb)
+        rospy.Subscriber('/can_second', can_info, self.Can_Cb)
+
     '''接收行人报文的函数'''
     def CAN_Msg_Receive(self):
         while True:
@@ -155,8 +200,11 @@ class MainWindows(QWidget):
             if self.Thread_Msg_Ped_Rec_Indicator == 'Stop':
                 break
             else:
-                self.Result = self.CAN.CAN_Msg_Rec(self.CANlib, self.CAN_Device.nDeviceType, self.CAN_Device.nDeviceInd, \
-                                                   self.CAN_Device.nCANInd, self.vco_Ped, Frame_num=1, Time_out=1000)
+                # self.Result = self.CAN.CAN_Msg_Rec(self.CANlib, self.CAN_Device.nDeviceType, self.CAN_Device.nDeviceInd, \
+                #                                    self.CAN_Device.nCANInd, self.vco_Ped, Frame_num=1, Time_out=1000)
+
+                self.Result = self.CAN.CAN_Msg_Rec(self.can_msg)
+                # print(self.Result)
                 '''保存文件'''
                 if self.Record_Data_Indicator == 'Yes':
                     self.writer.writerow([time.ctime(), hex(self.Result[0]), self.Result[1]])
@@ -178,12 +226,13 @@ class MainWindows(QWidget):
         '''首先处理障碍物的报文'''
         if self.Result[0] in self.CAN_FigurePlot.Obstacle.CAN_Obstacle_ID[:, 0]:
             '''所有障碍物报文都在这里解析'''
-            self.Signal_Obstacle = CAN_Msg_Analysis().analysis(self.Result[0], bytearray(self.Result[1]), self.DBC)
+            self.Signal_Obstacle = CAN_Msg_Analysis().analysis(self.Result[0], bytearray(self.Result[1]), self.OBSTACLE_DBC)
+            print(self.Signal_Obstacle)
             '''因为障碍物报文不区分车和行人，但是障碍物的ID是固定的，一个ID只能对应一个人或者障碍物'''
-            self.Index = int(float(self.Signal_Obstacle['Obstacle_ID']))
+            self.Index = int(float(self.Signal_Obstacle['ObstacleID']))
             '''首先处理人的报文'''
-            if self.Signal_Obstacle['Obstacle_Type'] == 'Ped' or self.Signal_Obstacle['Obstacle_Type'] == 'Bike' \
-                    or self.Signal_Obstacle['Obstacle_Type'] == 'Bicycle':
+            if self.Signal_Obstacle['ObstacleType'] == 'pedestrain' or self.Signal_Obstacle['ObstacleType'] == 'bike' \
+                    or self.Signal_Obstacle['ObstacleType'] == 'Bicycle':
                 '''因为Mobileye识别到人才会输出相关报文，所以需要监测该报文对应的人（有一个唯一的ID号）在
                 下一时刻是否还会继续出现，如果不出现了，说明人没有识别到了，需要清除这个人的位置信息，不在
                 图上画出来。这里采用的方法是，对于行人，有一个64x2的矩阵，开始的时候矩阵全部为0，当接收到
@@ -196,11 +245,11 @@ class MainWindows(QWidget):
                 self.CAN_FigurePlot.Obstacle.Ped_Y[self.Index] = float(self.Signal_Obstacle['Obstacle_Position_Y'])
 
                 '''对于车辆也是一样的处理方法'''
-            elif self.Signal_Obstacle['Obstacle_Type'] == 'Vehicle' or self.Signal_Obstacle['Obstacle_Type'] == 'Truck':
+            elif self.Signal_Obstacle['ObstacleType'] == 'vehicle' or self.Signal_Obstacle['ObstacleType'] == 'truck':
                 self.Data_Veh_Counter[self.Index, 1] = self.Data_Veh_Counter[self.Index, 0]
                 self.Data_Veh_Counter[self.Index, 0] += 1
-                self.CAN_FigurePlot.Obstacle.Veh_X[self.Index] = float(self.Signal_Obstacle['Obstacle_Position_X'])
-                self.CAN_FigurePlot.Obstacle.Veh_Y[self.Index] = float(self.Signal_Obstacle['Obstacle_Position_Y'])
+                self.CAN_FigurePlot.Obstacle.Veh_X[self.Index] = float(self.Signal_Obstacle['ObstaclePosX'])
+                self.CAN_FigurePlot.Obstacle.Veh_Y[self.Index] = float(self.Signal_Obstacle['ObstaclePosY'])
             else:
                 pass
 
@@ -229,17 +278,17 @@ class MainWindows(QWidget):
             的参数在数据向量中的索引值为0，右侧的索引值为1'''
         elif self.Result[0] in self.CAN_FigurePlot.Lane.CAN_Ego_Left_Lane_ID or \
                 self.Result[0] in self.CAN_FigurePlot.Lane.CAN_Ego_Right_Lane_ID:
-            self.Signal_Lane = CAN_Msg_Analysis().analysis(self.Result[0], bytearray(self.Result[1]), self.DBC)
+            self.Signal_Lane = CAN_Msg_Analysis().analysis(self.Result[0], bytearray(self.Result[1]), self.LANE_DBC)
             if self.Result[0] == self.CAN_FigurePlot.Lane.CAN_Ego_Left_Lane_ID[0] or \
                     self.Result[0] == self.CAN_FigurePlot.Lane.CAN_Ego_Right_Lane_ID[0]:
                 Index_Lane_C023 = int((self.Result[0] - 0x766) / 2)
-                self.CAN_FigurePlot.Lane.Lane_C0[Index_Lane_C023] = float(self.Signal_Lane['Curve_Parameter_C0'])
-                self.CAN_FigurePlot.Lane.Lane_C2[Index_Lane_C023] = float(self.Signal_Lane['Curve_Parameter_C2'])
-                self.CAN_FigurePlot.Lane.Lane_C3[Index_Lane_C023] = float(self.Signal_Lane['Curve_Parameter_C3'])
+                self.CAN_FigurePlot.Lane.Lane_C0[Index_Lane_C023] = float(self.Signal_Lane['Position']) #Lane_Model_C0)
+                self.CAN_FigurePlot.Lane.Lane_C2[Index_Lane_C023] = float(self.Signal_Lane['Curvature']) #Lane_Model_C2
+                self.CAN_FigurePlot.Lane.Lane_C3[Index_Lane_C023] = float(self.Signal_Lane['Curvature_Derivative']) #Lane_Model_C3
             elif self.Result[0] == self.CAN_FigurePlot.Lane.CAN_Ego_Left_Lane_ID[1] or self.Result[0] == \
                     self.CAN_FigurePlot.Lane.CAN_Ego_Right_Lane_ID[1]:
                 Index_Lane_C1 = int((self.Result[0] - 0x767)/2)
-                self.CAN_FigurePlot.Lane.Lane_C1[Index_Lane_C1] = float(self.Signal_Lane['Curve_Parameter_C1'])
+                self.CAN_FigurePlot.Lane.Lane_C1[Index_Lane_C1] = float(self.Signal_Lane['Heading_Angle']) #Lane_Model_C1
             else:
                 pass
             [self.CAN_FigurePlot.Lane.Lane_X, self.CAN_FigurePlot.Lane.Lane_Y] = \

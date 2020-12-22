@@ -21,3 +21,13 @@ class CAN_Rec(CAN_INITIAL):
         self.ID_receive = vco.ID
         self.Data = Com2Sou().Nint2Pint(list(vco.Data))
         return  [self.ID_receive,self.Data]
+
+
+
+class CAN_Rec_Ros():
+    def __init__(self, can_msg):
+        pass
+    def CAN_Msg_Rec(self, can_msg):
+        self.ID_receive = can_msg.id
+        self.Data = can_msg.data
+        return  [self.ID_receive,self.Data] 
