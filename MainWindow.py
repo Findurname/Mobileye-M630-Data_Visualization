@@ -481,7 +481,7 @@ class MainWindows(QWidget):
                 self.CAN_FigurePlot.Clear_Original()
                 '''清除已经画的所有图像'''
                 self.Windows_Clear()
-                '''所有的状态标志位复位'''
+'''所有的状态标志位复位'''
                 self.Return_Initial_State()
             else:
                 pass
