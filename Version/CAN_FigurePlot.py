@@ -63,11 +63,16 @@ class CAN_FigurePlot(QWidget):
         '''车辆'''
         self.Cur_Veh = pg.ScatterPlotItem(size=20, pen=pg.mkPen(None), brush=pg.mkBrush(0, 0, 255, 120))
         self.Picture.addItem(self.Cur_Veh)
-        '''车道线，一共绘制2条车道线'''
-        self.Cur_Lane0 = pg.ScatterPlotItem(size=10, pen=pg.mkPen(None), brush=pg.mkBrush(0, 255, 0, 120))
+        '''车道线，绘制左右2条车道线'''
+        self.Cur_Lane0 = pg.ScatterPlotItem(size=5, pen=pg.mkPen(None), brush=pg.mkBrush(0, 255, 0, 120))
         self.Picture.addItem(self.Cur_Lane0)
-        self.Cur_Lane1 = pg.ScatterPlotItem(size=10, pen=pg.mkPen(None), brush=pg.mkBrush(0, 255, 0, 120))
+        self.Cur_Lane1 = pg.ScatterPlotItem(size=5, pen=pg.mkPen(None), brush=pg.mkBrush(0, 255, 0, 120))
         self.Picture.addItem(self.Cur_Lane1)
+        '''车道线，绘制Next左右2条车道线'''
+        self.Cur_Lane2 = pg.ScatterPlotItem(size=5, pen=pg.mkPen(None), brush=pg.mkBrush(0, 255, 0, 120))
+        self.Picture.addItem(self.Cur_Lane2)
+        self.Cur_Lane3 = pg.ScatterPlotItem(size=5, pen=pg.mkPen(None), brush=pg.mkBrush(0, 255, 0, 120))
+        self.Picture.addItem(self.Cur_Lane3)
 
     '''这个函数MainWindos的CAN_Channel Save按钮触发，即当CAN通道设置完成开始接收CAN报文后就画一个原点'''
     def Original(self):
@@ -105,10 +110,10 @@ class CAN_FigurePlot(QWidget):
                                 i in range(self.Lane.Lane_X[1][:].shape[0]) if self.Lane.Lane_Y[1][:].all()], \
                                symbolBrush=(0, 255, 0), symbolPen='b', symbol='s')
 
-        self.Cur_Lane0.setData([{'pos': [self.Lane.Lane_Y[2][i], self.Lane.Lane_X[2][i]], 'data': 1} for \
+        self.Cur_Lane2.setData([{'pos': [self.Lane.Lane_Y[2][i], self.Lane.Lane_X[2][i]], 'data': 1} for \
                                 i in range(self.Lane.Lane_X[2][:].shape[0]) if self.Lane.Lane_Y[2][:].all()], \
                                symbolBrush=(0, 255, 0), symbolPen='b', symbol='s')
-        self.Cur_Lane1.setData([{'pos': [self.Lane.Lane_Y[3][i], self.Lane.Lane_X[3][i]], 'data': 1} for \
+        self.Cur_Lane3.setData([{'pos': [self.Lane.Lane_Y[3][i], self.Lane.Lane_X[3][i]], 'data': 1} for \
                                 i in range(self.Lane.Lane_X[3][:].shape[0]) if self.Lane.Lane_Y[3][:].all()], \
                                symbolBrush=(0, 255, 0), symbolPen='b', symbol='s')
 

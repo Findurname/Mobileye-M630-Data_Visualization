@@ -312,7 +312,9 @@ class MainWindows(QWidget):
         
         ## Ego Lane
         elif self.Result[0] in self.CAN_FigurePlot.Lane.CAN_Ego_Left_Lane_ID or \
-                self.Result[0] in self.CAN_FigurePlot.Lane.CAN_Ego_Right_Lane_ID:
+                self.Result[0] in self.CAN_FigurePlot.Lane.CAN_Ego_Right_Lane_ID or \
+                self.Result[0] in self.CAN_FigurePlot.Lane.CAN_Next_Left_Lane0_ID or \
+                self.Result[0] in self.CAN_FigurePlot.Lane.CAN_Next_Right_Lane0_ID:
             self.Signal_Lane = CAN_Msg_Analysis().analysis(self.Result[0], bytearray(self.Result[1]), self.LANE_DBC)
             if self.Result[0] == self.CAN_FigurePlot.Lane.CAN_Ego_Left_Lane_ID[0] or \
                     self.Result[0] == self.CAN_FigurePlot.Lane.CAN_Ego_Right_Lane_ID[0]:
@@ -325,31 +327,35 @@ class MainWindows(QWidget):
                     self.CAN_FigurePlot.Lane.CAN_Ego_Right_Lane_ID[1]:
                 Index_Lane_C1 = int((self.Result[0] - 0x767)/2)
                 self.CAN_FigurePlot.Lane.Lane_C1[Index_Lane_C1] = float(self.Signal_Lane['Lane_Model_C1']) #Lane_Model_C1
-            else:
-                pass
-            [self.CAN_FigurePlot.Lane.Lane_X[0:2], self.CAN_FigurePlot.Lane.Lane_Y[0:2]] = \
-                Coordinate().Lane_XY_Calculate(self.CAN_FigurePlot.Lane.Lane_C0[0:2], self.CAN_FigurePlot.Lane.Lane_C1[0:2], \
-                                               self.CAN_FigurePlot.Lane.Lane_C2[0:2], self.CAN_FigurePlot.Lane.Lane_C3[0:2])
-        ## Next Lane
-        elif self.Result[0] in self.CAN_FigurePlot.Lane.CAN_Next_Left_Lane0_ID or \
-                self.Result[0] in self.CAN_FigurePlot.Lane.CAN_Next_Right_Lane0_ID:
-            self.Signal_Lane = CAN_Msg_Analysis().analysis(self.Result[0], bytearray(self.Result[1]), self.LANE_DBC)
-            if self.Result[0] == self.CAN_FigurePlot.Lane.CAN_Next_Left_Lane0_ID[0] or \
+
+            elif self.Result[0] == self.CAN_FigurePlot.Lane.CAN_Next_Left_Lane0_ID[0] or \
                     self.Result[0] == self.CAN_FigurePlot.Lane.CAN_Next_Right_Lane0_ID[0]:
-                Index_Lane_C023 = int((self.Result[0] - 0x76c) / 2 + 2)
-                self.CAN_FigurePlot.Lane.Lane_C0[Index_Lane_C023] = float(self.Signal_Lane['Lane_Model_C0']) #Lane_Model_C0)
-                # print("LKA C0: ", self.CAN_FigurePlot.Lane.Lane_C0[Index_Lane_C023])
-                self.CAN_FigurePlot.Lane.Lane_C2[Index_Lane_C023] = float(self.Signal_Lane['Lane_Model_C2']) #Lane_Model_C2
-                self.CAN_FigurePlot.Lane.Lane_C3[Index_Lane_C023] = float(self.Signal_Lane['Lane_Model_C3']) #Lane_Model_C3
+                Index_Next_Lane_C023 = int((self.Result[0] - 0x76c) / 2 + 2)
+                # print("Index_Next_Lane_C023: ", Index_Next_Lane_C023)
+                self.CAN_FigurePlot.Lane.Lane_C0[Index_Next_Lane_C023] = float(self.Signal_Lane['Lane_Model_C0']) #Lane_Model_C0)
+                print("Next Lane C0: ", self.CAN_FigurePlot.Lane.Lane_C0[Index_Next_Lane_C023])
+                self.CAN_FigurePlot.Lane.Lane_C2[Index_Next_Lane_C023] = float(self.Signal_Lane['Lane_Model_C2']) #Lane_Model_C2
+                self.CAN_FigurePlot.Lane.Lane_C3[Index_Next_Lane_C023] = float(self.Signal_Lane['Lane_Model_C3']) #Lane_Model_C3
             elif self.Result[0] == self.CAN_FigurePlot.Lane.CAN_Next_Left_Lane0_ID[1] or self.Result[0] == \
                     self.CAN_FigurePlot.Lane.CAN_Next_Right_Lane0_ID[1]:
-                Index_Lane_C1 = int((self.Result[0] - 0x76d)/2 + 2)
-                self.CAN_FigurePlot.Lane.Lane_C1[Index_Lane_C1] = float(self.Signal_Lane['Lane_Model_C1']) #Lane_Model_C1
+                Index_Next_Lane_C1 = int((self.Result[0] - 0x76d)/2 + 2)
+                self.CAN_FigurePlot.Lane.Lane_C1[Index_Next_Lane_C1] = float(self.Signal_Lane['Lane_Model_C1']) #Lane_Model_C1
+            
             else:
                 pass
-            [self.CAN_FigurePlot.Lane.Lane_X[2:4], self.CAN_FigurePlot.Lane.Lane_Y[2:4]] = \
-                Coordinate().Lane_XY_Calculate(self.CAN_FigurePlot.Lane.Lane_C0[2:4], self.CAN_FigurePlot.Lane.Lane_C1[2:4], \
-                                               self.CAN_FigurePlot.Lane.Lane_C2[2:4], self.CAN_FigurePlot.Lane.Lane_C3[2:4])
+
+            ## Up-Down
+            # [self.CAN_FigurePlot.Lane.Lane_X, self.CAN_FigurePlot.Lane.Lane_Y] = \
+            #     Coordinate().Lane_XY_Calculate(self.CAN_FigurePlot.Lane.Lane_C0, self.CAN_FigurePlot.Lane.Lane_C1, \
+            #                                    self.CAN_FigurePlot.Lane.Lane_C2, self.CAN_FigurePlot.Lane.Lane_C3)
+            # print(self.CAN_FigurePlot.Lane.Lane_Y)
+
+            ## Left-Right
+            [self.CAN_FigurePlot.Lane.Lane_Y, self.CAN_FigurePlot.Lane.Lane_X] = \
+                Coordinate().Lane_XY_Calculate(self.CAN_FigurePlot.Lane.Lane_C0, self.CAN_FigurePlot.Lane.Lane_C1, \
+                                               self.CAN_FigurePlot.Lane.Lane_C2, self.CAN_FigurePlot.Lane.Lane_C3)
+            print(len(self.CAN_FigurePlot.Lane.Lane_X))
+
         else:
             pass
 
