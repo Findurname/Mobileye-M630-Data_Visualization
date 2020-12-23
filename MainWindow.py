@@ -333,7 +333,7 @@ class MainWindows(QWidget):
                 Index_Next_Lane_C023 = int((self.Result[0] - 0x76c) / 2 + 2)
                 # print("Index_Next_Lane_C023: ", Index_Next_Lane_C023)
                 self.CAN_FigurePlot.Lane.Lane_C0[Index_Next_Lane_C023] = float(self.Signal_Lane['Lane_Model_C0']) #Lane_Model_C0)
-                print("Next Lane C0: ", self.CAN_FigurePlot.Lane.Lane_C0[Index_Next_Lane_C023])
+                # print("Next Lane C0: ", self.CAN_FigurePlot.Lane.Lane_C0[Index_Next_Lane_C023])
                 self.CAN_FigurePlot.Lane.Lane_C2[Index_Next_Lane_C023] = float(self.Signal_Lane['Lane_Model_C2']) #Lane_Model_C2
                 self.CAN_FigurePlot.Lane.Lane_C3[Index_Next_Lane_C023] = float(self.Signal_Lane['Lane_Model_C3']) #Lane_Model_C3
             elif self.Result[0] == self.CAN_FigurePlot.Lane.CAN_Next_Left_Lane0_ID[1] or self.Result[0] == \
@@ -344,17 +344,10 @@ class MainWindows(QWidget):
             else:
                 pass
 
-            ## Up-Down
-            # [self.CAN_FigurePlot.Lane.Lane_X, self.CAN_FigurePlot.Lane.Lane_Y] = \
-            #     Coordinate().Lane_XY_Calculate(self.CAN_FigurePlot.Lane.Lane_C0, self.CAN_FigurePlot.Lane.Lane_C1, \
-            #                                    self.CAN_FigurePlot.Lane.Lane_C2, self.CAN_FigurePlot.Lane.Lane_C3)
-            # print(self.CAN_FigurePlot.Lane.Lane_Y)
-
-            ## Left-Right
-            [self.CAN_FigurePlot.Lane.Lane_Y, self.CAN_FigurePlot.Lane.Lane_X] = \
+            [self.CAN_FigurePlot.Lane.Lane_X, self.CAN_FigurePlot.Lane.Lane_Y] = \
                 Coordinate().Lane_XY_Calculate(self.CAN_FigurePlot.Lane.Lane_C0, self.CAN_FigurePlot.Lane.Lane_C1, \
                                                self.CAN_FigurePlot.Lane.Lane_C2, self.CAN_FigurePlot.Lane.Lane_C3)
-            print(len(self.CAN_FigurePlot.Lane.Lane_X))
+            print(self.CAN_FigurePlot.Lane.Lane_Y)
 
         else:
             pass

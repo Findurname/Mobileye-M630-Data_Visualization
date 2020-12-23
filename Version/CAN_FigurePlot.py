@@ -24,7 +24,8 @@ class CAN_FigurePlot(QWidget):
         self.Curve_Generate()
 
     def SetUI(self):
-        self.resize(1144,600)
+        # self.resize(1144,600)
+        self.resize(1400,600)
         self.setWindowTitle("VERSION CAN")
         self.VB = QVBoxLayout()
         self.win = pg.GraphicsLayoutWidget()
@@ -43,7 +44,7 @@ class CAN_FigurePlot(QWidget):
     def Clear_Window(self):
         self.Cur_ped.clear()
         self.Cur_Veh.clear()
-        for i in range(2):
+        for i in range(4):
             exec('self.Cur_Lane%d.clear()'%i)
 
     def Clear_Original(self):
@@ -97,25 +98,35 @@ class CAN_FigurePlot(QWidget):
                              symbolBrush=(255, 255, 0), symbolPen='y', symbol='t')
 
     def Plot_Data_Lane(self):
-        # self.Cur_Lane0.setData([{'pos': [self.Lane.Lane_X[0][i], self.Lane.Lane_Y[0][i]], 'data': 1} for \
-        #                         i in range(self.Lane.Lane_X[0][:].shape[0]) if self.Lane.Lane_Y[0][:].all()], \
-        #                        symbolBrush=(0, 255, 0), symbolPen='b', symbol='s')
-        # self.Cur_Lane1.setData([{'pos': [self.Lane.Lane_X[1][i], self.Lane.Lane_Y[1][i]], 'data': 1} for \
-        #                         i in range(self.Lane.Lane_X[1][:].shape[0]) if self.Lane.Lane_Y[1][:].all()], \
-        #                        symbolBrush=(0, 255, 0), symbolPen='b', symbol='s')
-        self.Cur_Lane0.setData([{'pos': [self.Lane.Lane_Y[0][i], self.Lane.Lane_X[0][i]], 'data': 1} for \
+
+        ## Left-Right
+        self.Cur_Lane0.setData([{'pos': [self.Lane.Lane_X[0][i], self.Lane.Lane_Y[0][i]], 'data': 1} for \
                                 i in range(self.Lane.Lane_X[0][:].shape[0]) if self.Lane.Lane_Y[0][:].all()], \
                                symbolBrush=(0, 255, 0), symbolPen='b', symbol='s')
-        self.Cur_Lane1.setData([{'pos': [self.Lane.Lane_Y[1][i], self.Lane.Lane_X[1][i]], 'data': 1} for \
+        self.Cur_Lane1.setData([{'pos': [self.Lane.Lane_X[1][i], self.Lane.Lane_Y[1][i]], 'data': 1} for \
                                 i in range(self.Lane.Lane_X[1][:].shape[0]) if self.Lane.Lane_Y[1][:].all()], \
                                symbolBrush=(0, 255, 0), symbolPen='b', symbol='s')
-
-        self.Cur_Lane2.setData([{'pos': [self.Lane.Lane_Y[2][i], self.Lane.Lane_X[2][i]], 'data': 1} for \
+        self.Cur_Lane2.setData([{'pos': [self.Lane.Lane_X[2][i], self.Lane.Lane_Y[2][i]], 'data': 1} for \
                                 i in range(self.Lane.Lane_X[2][:].shape[0]) if self.Lane.Lane_Y[2][:].all()], \
                                symbolBrush=(0, 255, 0), symbolPen='b', symbol='s')
-        self.Cur_Lane3.setData([{'pos': [self.Lane.Lane_Y[3][i], self.Lane.Lane_X[3][i]], 'data': 1} for \
+        self.Cur_Lane3.setData([{'pos': [self.Lane.Lane_X[3][i], self.Lane.Lane_Y[3][i]], 'data': 1} for \
                                 i in range(self.Lane.Lane_X[3][:].shape[0]) if self.Lane.Lane_Y[3][:].all()], \
                                symbolBrush=(0, 255, 0), symbolPen='b', symbol='s')
+
+        ## Up-Down
+        # self.Cur_Lane0.setData([{'pos': [self.Lane.Lane_Y[0][i], self.Lane.Lane_X[0][i]], 'data': 1} for \
+        #                         i in range(self.Lane.Lane_X[0][:].shape[0]) if self.Lane.Lane_Y[0][:].all()], \
+        #                        symbolBrush=(0, 255, 0), symbolPen='b', symbol='s')
+        # self.Cur_Lane1.setData([{'pos': [self.Lane.Lane_Y[1][i], self.Lane.Lane_X[1][i]], 'data': 1} for \
+        #                         i in range(self.Lane.Lane_X[1][:].shape[0]) if self.Lane.Lane_Y[1][:].all()], \
+        #                        symbolBrush=(0, 255, 0), symbolPen='b', symbol='s')
+
+        # self.Cur_Lane2.setData([{'pos': [self.Lane.Lane_Y[2][i], self.Lane.Lane_X[2][i]], 'data': 1} for \
+        #                         i in range(self.Lane.Lane_X[2][:].shape[0]) if self.Lane.Lane_Y[2][:].all()], \
+        #                        symbolBrush=(0, 255, 0), symbolPen='b', symbol='s')
+        # self.Cur_Lane3.setData([{'pos': [self.Lane.Lane_Y[3][i], self.Lane.Lane_X[3][i]], 'data': 1} for \
+        #                         i in range(self.Lane.Lane_X[3][:].shape[0]) if self.Lane.Lane_Y[3][:].all()], \
+        #                        symbolBrush=(0, 255, 0), symbolPen='b', symbol='s')
 
 
 if __name__ == '__main__':
