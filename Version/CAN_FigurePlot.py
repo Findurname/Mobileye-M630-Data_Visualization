@@ -92,12 +92,26 @@ class CAN_FigurePlot(QWidget):
                              symbolBrush=(255, 255, 0), symbolPen='y', symbol='t')
 
     def Plot_Data_Lane(self):
-        self.Cur_Lane0.setData([{'pos': [self.Lane.Lane_X[0][i], self.Lane.Lane_Y[0][i]], 'data': 1} for \
+        # self.Cur_Lane0.setData([{'pos': [self.Lane.Lane_X[0][i], self.Lane.Lane_Y[0][i]], 'data': 1} for \
+        #                         i in range(self.Lane.Lane_X[0][:].shape[0]) if self.Lane.Lane_Y[0][:].all()], \
+        #                        symbolBrush=(0, 255, 0), symbolPen='b', symbol='s')
+        # self.Cur_Lane1.setData([{'pos': [self.Lane.Lane_X[1][i], self.Lane.Lane_Y[1][i]], 'data': 1} for \
+        #                         i in range(self.Lane.Lane_X[1][:].shape[0]) if self.Lane.Lane_Y[1][:].all()], \
+        #                        symbolBrush=(0, 255, 0), symbolPen='b', symbol='s')
+        self.Cur_Lane0.setData([{'pos': [self.Lane.Lane_Y[0][i], self.Lane.Lane_X[0][i]], 'data': 1} for \
                                 i in range(self.Lane.Lane_X[0][:].shape[0]) if self.Lane.Lane_Y[0][:].all()], \
                                symbolBrush=(0, 255, 0), symbolPen='b', symbol='s')
-        self.Cur_Lane1.setData([{'pos': [self.Lane.Lane_X[1][i], self.Lane.Lane_Y[1][i]], 'data': 1} for \
+        self.Cur_Lane1.setData([{'pos': [self.Lane.Lane_Y[1][i], self.Lane.Lane_X[1][i]], 'data': 1} for \
                                 i in range(self.Lane.Lane_X[1][:].shape[0]) if self.Lane.Lane_Y[1][:].all()], \
                                symbolBrush=(0, 255, 0), symbolPen='b', symbol='s')
+
+        self.Cur_Lane0.setData([{'pos': [self.Lane.Lane_Y[2][i], self.Lane.Lane_X[2][i]], 'data': 1} for \
+                                i in range(self.Lane.Lane_X[2][:].shape[0]) if self.Lane.Lane_Y[2][:].all()], \
+                               symbolBrush=(0, 255, 0), symbolPen='b', symbol='s')
+        self.Cur_Lane1.setData([{'pos': [self.Lane.Lane_Y[3][i], self.Lane.Lane_X[3][i]], 'data': 1} for \
+                                i in range(self.Lane.Lane_X[3][:].shape[0]) if self.Lane.Lane_Y[3][:].all()], \
+                               symbolBrush=(0, 255, 0), symbolPen='b', symbol='s')
+
 
 if __name__ == '__main__':
     app = QApplication(sys.argv)

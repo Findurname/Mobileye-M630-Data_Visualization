@@ -21,12 +21,12 @@ class CAN_Data_Obstacle:
 
 class CAN_Data_Lane:
     '''车道线参数向量'''
-    Lane_C0 = np.zeros(2).reshape(2,1)
-    Lane_C1 = np.zeros(2).reshape(2,1)
-    Lane_C2 = np.zeros(2).reshape(2,1)
-    Lane_C3 = np.zeros(2).reshape(2,1)
-    Lane_X = np.zeros([2, 50])
-    Lane_Y = np.zeros([2, 50])
+    Lane_C0 = np.zeros(4).reshape(4,1)
+    Lane_C1 = np.zeros(4).reshape(4,1)
+    Lane_C2 = np.zeros(4).reshape(4,1)
+    Lane_C3 = np.zeros(4).reshape(4,1)
+    Lane_X = np.zeros([4, 50])
+    Lane_Y = np.zeros([4, 50])
 
     '''车道线报文ID'''
     CAN_Ego_Left_Lane_ID = [0x766, 0x767]

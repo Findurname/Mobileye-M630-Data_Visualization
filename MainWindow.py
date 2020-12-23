@@ -53,7 +53,8 @@ class MainWindows(QWidget):
                 # self.Can_Cb(data)
         self.DBC_Path = '/home/jerry/Documents/ME/Mobileye1.dbc'
         self.OBSTACLE_DBC_Path = '/home/jerry/Documents/ME/Mobileye1.dbc'
-        self.LANE_DBC_Path = '/home/jerry/Documents/ME/new/meLanes3_v3.dbc'
+        # self.LANE_DBC_Path = '/home/jerry/Documents/ME/new/meLanes3_v3.dbc'
+        self.LANE_DBC_Path = '/home/jerry/Documents/ME/meLanes3.dbc'
         self.LANE_RE_DBC_Path = '/home/jerry/Documents/ME/meLanes_RE.dbc'
         self.TSR_DBC_Path = '/home/jerry/Documents/ME/new/meTSR3_v5.1.dbc'
 
@@ -287,24 +288,68 @@ class MainWindows(QWidget):
 
             '''处理车道线，每条车道线一共有4个参数表示，分别放在2条报文中，一条报文3个C0C2C3，一条报文1个C1。左侧车道线
             的参数在数据向量中的索引值为0，右侧的索引值为1'''
+
+        
+        # elif self.Result[0] in self.CAN_FigurePlot.Lane.CAN_Ego_Left_Lane_ID or \
+        #         self.Result[0] in self.CAN_FigurePlot.Lane.CAN_Ego_Right_Lane_ID:
+        #     self.Signal_Lane = CAN_Msg_Analysis().analysis(self.Result[0], bytearray(self.Result[1]), self.LANE_DBC)
+        #     if self.Result[0] == self.CAN_FigurePlot.Lane.CAN_Ego_Left_Lane_ID[0] or \
+        #             self.Result[0] == self.CAN_FigurePlot.Lane.CAN_Ego_Right_Lane_ID[0]:
+        #         Index_Lane_C023 = int((self.Result[0] - 0x766) / 2)
+        #         self.CAN_FigurePlot.Lane.Lane_C0[Index_Lane_C023] = float(self.Signal_Lane['Position']) #Lane_Model_C0)
+        #         print(self.CAN_FigurePlot.Lane.Lane_C0[Index_Lane_C023])
+        #         self.CAN_FigurePlot.Lane.Lane_C2[Index_Lane_C023] = float(self.Signal_Lane['Curvature']) #Lane_Model_C2
+        #         self.CAN_FigurePlot.Lane.Lane_C3[Index_Lane_C023] = float(self.Signal_Lane['Curvature_Derivative']) #Lane_Model_C3
+        #     elif self.Result[0] == self.CAN_FigurePlot.Lane.CAN_Ego_Left_Lane_ID[1] or self.Result[0] == \
+        #             self.CAN_FigurePlot.Lane.CAN_Ego_Right_Lane_ID[1]:
+        #         Index_Lane_C1 = int((self.Result[0] - 0x767)/2)
+        #         self.CAN_FigurePlot.Lane.Lane_C1[Index_Lane_C1] = float(self.Signal_Lane['Heading_Angle']) #Lane_Model_C1
+        #     else:
+        #         pass
+        #     [self.CAN_FigurePlot.Lane.Lane_X, self.CAN_FigurePlot.Lane.Lane_Y] = \
+        #         Coordinate().Lane_XY_Calculate(self.CAN_FigurePlot.Lane.Lane_C0, self.CAN_FigurePlot.Lane.Lane_C1, \
+        #                                        self.CAN_FigurePlot.Lane.Lane_C2, self.CAN_FigurePlot.Lane.Lane_C3)
+        
+        ## Ego Lane
         elif self.Result[0] in self.CAN_FigurePlot.Lane.CAN_Ego_Left_Lane_ID or \
                 self.Result[0] in self.CAN_FigurePlot.Lane.CAN_Ego_Right_Lane_ID:
             self.Signal_Lane = CAN_Msg_Analysis().analysis(self.Result[0], bytearray(self.Result[1]), self.LANE_DBC)
             if self.Result[0] == self.CAN_FigurePlot.Lane.CAN_Ego_Left_Lane_ID[0] or \
                     self.Result[0] == self.CAN_FigurePlot.Lane.CAN_Ego_Right_Lane_ID[0]:
                 Index_Lane_C023 = int((self.Result[0] - 0x766) / 2)
-                self.CAN_FigurePlot.Lane.Lane_C0[Index_Lane_C023] = float(self.Signal_Lane['Position']) #Lane_Model_C0)
-                self.CAN_FigurePlot.Lane.Lane_C2[Index_Lane_C023] = float(self.Signal_Lane['Curvature']) #Lane_Model_C2
-                self.CAN_FigurePlot.Lane.Lane_C3[Index_Lane_C023] = float(self.Signal_Lane['Curvature_Derivative']) #Lane_Model_C3
+                self.CAN_FigurePlot.Lane.Lane_C0[Index_Lane_C023] = float(self.Signal_Lane['Lane_Model_C0']) #Lane_Model_C0)
+                # print("LKA C0: ", self.CAN_FigurePlot.Lane.Lane_C0[Index_Lane_C023])
+                self.CAN_FigurePlot.Lane.Lane_C2[Index_Lane_C023] = float(self.Signal_Lane['Lane_Model_C2']) #Lane_Model_C2
+                self.CAN_FigurePlot.Lane.Lane_C3[Index_Lane_C023] = float(self.Signal_Lane['Lane_Model_C3']) #Lane_Model_C3
             elif self.Result[0] == self.CAN_FigurePlot.Lane.CAN_Ego_Left_Lane_ID[1] or self.Result[0] == \
                     self.CAN_FigurePlot.Lane.CAN_Ego_Right_Lane_ID[1]:
                 Index_Lane_C1 = int((self.Result[0] - 0x767)/2)
-                self.CAN_FigurePlot.Lane.Lane_C1[Index_Lane_C1] = float(self.Signal_Lane['Heading_Angle']) #Lane_Model_C1
+                self.CAN_FigurePlot.Lane.Lane_C1[Index_Lane_C1] = float(self.Signal_Lane['Lane_Model_C1']) #Lane_Model_C1
             else:
                 pass
-            [self.CAN_FigurePlot.Lane.Lane_X, self.CAN_FigurePlot.Lane.Lane_Y] = \
-                Coordinate().Lane_XY_Calculate(self.CAN_FigurePlot.Lane.Lane_C0, self.CAN_FigurePlot.Lane.Lane_C1, \
-                                               self.CAN_FigurePlot.Lane.Lane_C2, self.CAN_FigurePlot.Lane.Lane_C3)
+            [self.CAN_FigurePlot.Lane.Lane_X[0:2], self.CAN_FigurePlot.Lane.Lane_Y[0:2]] = \
+                Coordinate().Lane_XY_Calculate(self.CAN_FigurePlot.Lane.Lane_C0[0:2], self.CAN_FigurePlot.Lane.Lane_C1[0:2], \
+                                               self.CAN_FigurePlot.Lane.Lane_C2[0:2], self.CAN_FigurePlot.Lane.Lane_C3[0:2])
+        ## Next Lane
+        elif self.Result[0] in self.CAN_FigurePlot.Lane.CAN_Next_Left_Lane0_ID or \
+                self.Result[0] in self.CAN_FigurePlot.Lane.CAN_Next_Right_Lane0_ID:
+            self.Signal_Lane = CAN_Msg_Analysis().analysis(self.Result[0], bytearray(self.Result[1]), self.LANE_DBC)
+            if self.Result[0] == self.CAN_FigurePlot.Lane.CAN_Next_Left_Lane0_ID[0] or \
+                    self.Result[0] == self.CAN_FigurePlot.Lane.CAN_Next_Right_Lane0_ID[0]:
+                Index_Lane_C023 = int((self.Result[0] - 0x76c) / 2 + 2)
+                self.CAN_FigurePlot.Lane.Lane_C0[Index_Lane_C023] = float(self.Signal_Lane['Lane_Model_C0']) #Lane_Model_C0)
+                # print("LKA C0: ", self.CAN_FigurePlot.Lane.Lane_C0[Index_Lane_C023])
+                self.CAN_FigurePlot.Lane.Lane_C2[Index_Lane_C023] = float(self.Signal_Lane['Lane_Model_C2']) #Lane_Model_C2
+                self.CAN_FigurePlot.Lane.Lane_C3[Index_Lane_C023] = float(self.Signal_Lane['Lane_Model_C3']) #Lane_Model_C3
+            elif self.Result[0] == self.CAN_FigurePlot.Lane.CAN_Next_Left_Lane0_ID[1] or self.Result[0] == \
+                    self.CAN_FigurePlot.Lane.CAN_Next_Right_Lane0_ID[1]:
+                Index_Lane_C1 = int((self.Result[0] - 0x76d)/2 + 2)
+                self.CAN_FigurePlot.Lane.Lane_C1[Index_Lane_C1] = float(self.Signal_Lane['Lane_Model_C1']) #Lane_Model_C1
+            else:
+                pass
+            [self.CAN_FigurePlot.Lane.Lane_X[2:4], self.CAN_FigurePlot.Lane.Lane_Y[2:4]] = \
+                Coordinate().Lane_XY_Calculate(self.CAN_FigurePlot.Lane.Lane_C0[2:4], self.CAN_FigurePlot.Lane.Lane_C1[2:4], \
+                                               self.CAN_FigurePlot.Lane.Lane_C2[2:4], self.CAN_FigurePlot.Lane.Lane_C3[2:4])
         else:
             pass
 

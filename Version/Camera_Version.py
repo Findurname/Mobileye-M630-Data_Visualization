@@ -8,6 +8,7 @@ import qdarkstyle
 import rospy
 from sensor_msgs.msg import CompressedImage
 from sensor_msgs.msg import Image
+from cv_bridge import CvBridge
 import numpy as np
 
 
@@ -36,24 +37,36 @@ class Camera_Version(QWidget):
         self.Vedio_Winndow.setPixmap(self.init_image)
         # self.image = Image()
         # self.image_np = np.zeros((1200, 1920, 3), dtype=np.uint8)
+        self.bridge = CvBridge()
         layout = QVBoxLayout()
         layout.addWidget(self.Vedio_Winndow)
         self.setLayout(layout)
  
 
     def Image_Cb(self, img_msg):
-        np_arr = np.frombuffer(img_msg.data, np.uint8)
+        # np_arr = np.frombuffer(img_msg.data, np.uint8)
         # self.image_np = cv2.imdecode(np_arr, cv2.IMREAD_COLOR)
         # image = cv2.imdecode(np_arr, cv2.IMREAD_COLOR)
         # self.image_np = np.copy(image)
         # while np_arr.any() != 0:
-        frame = cv2.imdecode(np_arr, cv2.IMREAD_COLOR)
-        img = QImage(frame.data, frame.shape[1], frame.shape[0], QImage.Format_RGB888)
-        self.Vedio_Winndow.setPixmap(QPixmap.fromImage(img))
+        # frame = cv2.imdecode(np_arr, cv2.IMREAD_COLOR)
+        # img = QImage(frame.data, frame.shape[1], frame.shape[0], QImage.Format_RGB888)
+        # self.Vedio_Winndow.setPixmap(QPixmap.fromImage(img))
             # print("image: ", self.image_np.shape)
             # print(self.image_np)
         # pass
-        # cv2.waitKey(1)
+ 
+        frame = self.bridge.imgmsg_to_cv2(img_msg, "passthrough")
+        # frame = self.bridge.compressed_imgmsg_to_cv2(img_msg, "passthrough")
+        # frame = cv2.resize(frame, (444, 250), interpolation = cv2.INTER_AREA)
+        img = QImage(frame.data, frame.shape[1], frame.shape[0], QImage.Format_RGB888)
+        self.Vedio_Winndow.setPixmap(QPixmap.fromImage(img)) 
+        # print(type(frame))
+        # print(type(frame[0][0][0]))
+        # print(frame.shape)
+        # if frame.any() != 0:
+            # cv2.imshow("Imshow", frame)
+            # cv2.waitKey(3)
     def Open_Vedio_Initial(self):
         # url = "rtsp://192.168.1.10:554/user=admin&password=admin&channel=1&stream=0.sdp?"
         # self.cap = cv2.VideoCapture(url)
@@ -107,8 +120,8 @@ class Camera_Version(QWidget):
                     # cv2.waitKey(1)
     def Vedio_Show_Ros(self):
 
-        rospy.Subscriber('/usb_cam/image_raw/compressed', CompressedImage, self.Image_Cb)
-
+        # rospy.Subscriber('/usb_cam/image_raw/compressed', CompressedImage, self.Image_Cb)
+        rospy.Subscriber('/usb_cam/image_raw', Image, self.Image_Cb)
         # frame = cv2.cvtColor(self.image_np, cv2.COLOR_RGB2BGR)
         # # print("----------------Vedio_Show_Ros")
         
