@@ -69,3 +69,21 @@ class CAN_Data_Vehicle:
 
     def __init__(self):
         pass
+
+class CAN_DATA_TSR:
+
+    CAN_TSR_ID = np.array([0x720, 0x721, 0x722, 0x723, 0x724, 0x725, 0x726])
+    CAN_VISION_ONLY_TSR_CONTINUOUS = np.array([0x727])
+ 
+    def __init__(self):
+        self.Sign_Position_X = np.zeros(64)
+        self.Sign_Position_Y = np.zeros(64)
+        self.Sign_Position_Z = np.zeros(64)
+
+
+class CAN_DATA_TFL:
+
+    CAN_TSR_ID = np.array([0x712, 0x713, 0x714, 0x715, 0x716, 0x717, 0x718, 0x719, 0x71a])
+ 
+    def __init__(self):
+        pass

@@ -14,11 +14,15 @@ class CAN_FigurePlot(QWidget):
         self.Timer_Cur_Ped = QTimer()
         self.Timer_Cur_Veh = QTimer()
         self.Timer_Cur_Lane = QTimer()
+        self.Timer_Cur_Tsr = QTimer()
         self.Timer_Cur_Ped.timeout.connect(self.Plot_Data_Ped)
         self.Timer_Cur_Veh.timeout.connect(self.Plot_Data_Veh)
         self.Timer_Cur_Lane.timeout.connect(self.Plot_Data_Lane)
+        self.Timer_Cur_Tsr.timeout.connect(self.Plot_Data_Tsr)
         self.Obstacle = CAN_Data_Obstacle()
         self.Lane = CAN_Data_Lane()
+        self.Tsr = CAN_DATA_TSR()
+        # self.Tfl = CAN_DATA_TFL()
 
         '''不同属性的点集(人、车、车道线)用不同的曲线来绘制'''
         self.Curve_Generate()
@@ -39,6 +43,7 @@ class CAN_FigurePlot(QWidget):
         self.Timer_Cur_Ped.stop()
         self.Timer_Cur_Veh.stop()
         self.Timer_Cur_Lane.stop()
+        self.Timer_Cur_Tsr.stop()
         self.Clear_Window()
 
     def Clear_Window(self):
@@ -74,6 +79,9 @@ class CAN_FigurePlot(QWidget):
         self.Picture.addItem(self.Cur_Lane2)
         self.Cur_Lane3 = pg.ScatterPlotItem(size=5, pen=pg.mkPen(None), brush=pg.mkBrush(0, 255, 0, 120))
         self.Picture.addItem(self.Cur_Lane3)
+        '''TSR'''
+        self.Cur_Tsr = pg.ScatterPlotItem(size=5, pen=pg.mkPen(None), brush=pg.mkBrush(0, 255, 0, 120))
+        self.Picture.addItem(self.Cur_Tsr)
 
     '''这个函数MainWindos的CAN_Channel Save按钮触发，即当CAN通道设置完成开始接收CAN报文后就画一个原点'''
     def Original(self):
@@ -127,6 +135,14 @@ class CAN_FigurePlot(QWidget):
         # self.Cur_Lane3.setData([{'pos': [self.Lane.Lane_Y[3][i], self.Lane.Lane_X[3][i]], 'data': 1} for \
         #                         i in range(self.Lane.Lane_X[3][:].shape[0]) if self.Lane.Lane_Y[3][:].all()], \
         #                        symbolBrush=(0, 255, 0), symbolPen='b', symbol='s')
+
+    def Plot_Data_Tsr(self):
+        
+        self.Cur_Tsr.setData([{'pos': [self.Tsr.Sign_Position_X[i], self.Tsr.Sign_Position_Y[i]], 'data': 1} for \
+                        i in range(self.Tsr.Sign_Position_X.shape[0]) if (self.Tsr.Sign_Position_X[i] or self.Tsr.Sign_Position_Y[i])], \
+                        symbolBrush=(255, 255, 0), symbolPen='y', symbol='t')
+        pass
+
 
 
 if __name__ == '__main__':

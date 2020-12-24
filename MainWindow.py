@@ -104,7 +104,7 @@ class MainWindows(QWidget):
         self.CAN_Presetting.Signal_Record_Video.connect(self.Record_Vedio)
         self.CAN_Presetting.Signal_Save_Video.connect(self.Save_Vedio)
         '''设置完CAN参数后的信号'''
-        self.CAN_Channel.Signal_Save.connect(self.Ros_Receive_Set)
+        # self.CAN_Channel.Signal_Save.connect(self.Ros_Receive_Set)
         self.CAN_Channel.Signal_Cancel.connect(self.Reset_CAN_Setting)
 
 
