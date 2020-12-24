@@ -21,12 +21,13 @@ class CAN_Data_Obstacle:
 
 class CAN_Data_Lane:
     '''车道线参数向量'''
-    Lane_C0 = np.zeros(4).reshape(4,1)
-    Lane_C1 = np.zeros(4).reshape(4,1)
-    Lane_C2 = np.zeros(4).reshape(4,1)
-    Lane_C3 = np.zeros(4).reshape(4,1)
-    Lane_X = np.zeros([4, 50])
-    Lane_Y = np.zeros([4, 50])
+    # Lane_C0 = np.zeros(4).reshape(4,1)
+    # Lane_C1 = np.zeros(4).reshape(4,1)
+    # Lane_C2 = np.zeros(4).reshape(4,1)
+    # Lane_C3 = np.zeros(4).reshape(4,1)
+    # Lane_X = np.zeros([4, 50])
+    # Lane_Y = np.zeros([4, 50])
+
 
     '''车道线报文ID'''
     CAN_Ego_Left_Lane_ID = [0x766, 0x767]
@@ -44,9 +45,23 @@ class CAN_Data_Lane:
     # CAN_Next_Right_Lane1_ID = [0x772, 0x773]
     # CAN_Next_Right_Lane2_ID = [0x776, 0x777]
     # CAN_Next_Right_Lane3_ID = [0x77a, 0x77b]
-
+    def Clear(self):
+        self.Lane_C0 = np.zeros(4).reshape(4,1)
+        self.Lane_C1 = np.zeros(4).reshape(4,1)
+        self.Lane_C2 = np.zeros(4).reshape(4,1)
+        self.Lane_C3 = np.zeros(4).reshape(4,1)
+        self.Lane_X = np.zeros([4, 50])
+        self.Lane_Y = np.zeros([4, 50])
+        pass
+        
     def __init__(self):
         pass
+        self.Lane_C0 = np.zeros(4).reshape(4,1)
+        self.Lane_C1 = np.zeros(4).reshape(4,1)
+        self.Lane_C2 = np.zeros(4).reshape(4,1)
+        self.Lane_C3 = np.zeros(4).reshape(4,1)
+        self.Lane_X = np.zeros([4, 50])
+        self.Lane_Y = np.zeros([4, 50])
 
 class CAN_Data_Vehicle:
     '''车辆和Mobileye系统信号'''

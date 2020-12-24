@@ -201,7 +201,7 @@ class MainWindows(QWidget):
         pass
     def ROS_Msg_Sub(self):
         rospy.init_node("CAN_ROS", anonymous=True)
-        rospy.Subscriber('/usb_cam/image_raw/compressed', CompressedImage, self.Image_Cb)
+        # rospy.Subscriber('/usb_cam/image_raw/compressed', CompressedImage, self.Image_Cb)
         # rospy.Subscriber('/can_first', can_info, self.Can_Cb)
         rospy.Subscriber('/can_second', can_info, self.Can_Cb)
 
@@ -315,9 +315,16 @@ class MainWindows(QWidget):
                 self.Result[0] in self.CAN_FigurePlot.Lane.CAN_Ego_Right_Lane_ID or \
                 self.Result[0] in self.CAN_FigurePlot.Lane.CAN_Next_Left_Lane0_ID or \
                 self.Result[0] in self.CAN_FigurePlot.Lane.CAN_Next_Right_Lane0_ID:
+            
+            print("----- CanID: ", hex(self.Result[0]))
             self.Signal_Lane = CAN_Msg_Analysis().analysis(self.Result[0], bytearray(self.Result[1]), self.LANE_DBC)
             if self.Result[0] == self.CAN_FigurePlot.Lane.CAN_Ego_Left_Lane_ID[0] or \
                     self.Result[0] == self.CAN_FigurePlot.Lane.CAN_Ego_Right_Lane_ID[0]:
+                
+                if self.Result[0] == self.CAN_FigurePlot.Lane.CAN_Ego_Right_Lane_ID[0]:
+                    self.CAN_FigurePlot.Lane.Clear()
+                    print("---------- Clear!")
+                
                 Index_Lane_C023 = int((self.Result[0] - 0x766) / 2)
                 self.CAN_FigurePlot.Lane.Lane_C0[Index_Lane_C023] = float(self.Signal_Lane['Lane_Model_C0']) #Lane_Model_C0)
                 # print("LKA C0: ", self.CAN_FigurePlot.Lane.Lane_C0[Index_Lane_C023])
@@ -347,7 +354,7 @@ class MainWindows(QWidget):
             [self.CAN_FigurePlot.Lane.Lane_X, self.CAN_FigurePlot.Lane.Lane_Y] = \
                 Coordinate().Lane_XY_Calculate(self.CAN_FigurePlot.Lane.Lane_C0, self.CAN_FigurePlot.Lane.Lane_C1, \
                                                self.CAN_FigurePlot.Lane.Lane_C2, self.CAN_FigurePlot.Lane.Lane_C3)
-            print(self.CAN_FigurePlot.Lane.Lane_Y)
+            # print(self.CAN_FigurePlot.Lane.Lane_Y)
 
         else:
             pass

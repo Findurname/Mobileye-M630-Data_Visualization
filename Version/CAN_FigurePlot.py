@@ -24,8 +24,8 @@ class CAN_FigurePlot(QWidget):
         self.Curve_Generate()
 
     def SetUI(self):
-        # self.resize(1144,600)
-        self.resize(1400,600)
+        self.resize(1144,600)
+        # self.resize(1400,600)
         self.setWindowTitle("VERSION CAN")
         self.VB = QVBoxLayout()
         self.win = pg.GraphicsLayoutWidget()
