@@ -50,6 +50,6 @@ class Coordinate:
         :param Lane_C3:拟合参数C3，列向量；
         :return:返回所有车道线的X和Y坐标；
         '''
-        self.X_Lane = np.arange(0,150,3)*np.ones([4,50])
+        self.X_Lane = np.arange(0,50,1)*np.ones([4,50])
         self.Y_Lane = Lane_C0 + Lane_C1*self.X_Lane + Lane_C2*pow(self.X_Lane,2)+ Lane_C3*pow(self.X_Lane,3)
         return [self.X_Lane, self.Y_Lane]
