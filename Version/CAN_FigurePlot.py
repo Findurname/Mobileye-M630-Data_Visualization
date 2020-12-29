@@ -80,7 +80,7 @@ class CAN_FigurePlot(QWidget):
         self.Cur_Lane3 = pg.ScatterPlotItem(size=5, pen=pg.mkPen(None), brush=pg.mkBrush(0, 255, 0, 120))
         self.Picture.addItem(self.Cur_Lane3)
         '''TSR'''
-        self.Cur_Tsr = pg.ScatterPlotItem(size=5, pen=pg.mkPen(None), brush=pg.mkBrush(0, 255, 0, 120))
+        self.Cur_Tsr = pg.ScatterPlotItem(size=20, pen=pg.mkPen(None), brush=pg.mkBrush(0, 255, 0, 120))
         self.Picture.addItem(self.Cur_Tsr)
 
     '''这个函数MainWindos的CAN_Channel Save按钮触发，即当CAN通道设置完成开始接收CAN报文后就画一个原点'''

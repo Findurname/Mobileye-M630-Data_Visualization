@@ -92,7 +92,8 @@ class MainWindows(QWidget):
         '''绘图的信号'''
         self.CAN_Presetting.Signal_Ped_Show.connect(self.Ped_Show_Start)
         self.CAN_Presetting.Signal_Veh_Show.connect(self.Veh_Show_Start)
-        self.CAN_Presetting.Signal_Lane_Show.connect(self.Lane_Show_Start)
+        # self.CAN_Presetting.Signal_Lane_Show.connect(self.Lane_Show_Start)
+        self.CAN_Presetting.Signal_Lane_Show.connect(self.Tsr_Show_Start)
         self.CAN_Presetting.Signal_Clear_Show.connect(self.Clear_Show)
         '''保存数据信号'''
         self.CAN_Presetting.Signal_Record_Data.connect(self.Record_Data_Path)
@@ -242,6 +243,7 @@ class MainWindows(QWidget):
             # print(self.Signal_Obstacle)
             '''因为障碍物报文不区分车和行人，但是障碍物的ID是固定的，一个ID只能对应一个人或者障碍物'''
             self.Index = int(float(self.Signal_Obstacle['ObstacleID']))
+            # print(self.Index)
             '''首先处理人的报文'''
             if self.Signal_Obstacle['ObstacleType'] == 'pedestrain' or self.Signal_Obstacle['ObstacleType'] == 'bike' \
                     or self.Signal_Obstacle['ObstacleType'] == 'Bicycle':
@@ -355,6 +357,16 @@ class MainWindows(QWidget):
                 Coordinate().Lane_XY_Calculate(self.CAN_FigurePlot.Lane.Lane_C0, self.CAN_FigurePlot.Lane.Lane_C1, \
                                                self.CAN_FigurePlot.Lane.Lane_C2, self.CAN_FigurePlot.Lane.Lane_C3)
             # print(self.CAN_FigurePlot.Lane.Lane_Y)
+        
+        ## TSR
+        elif self.Result[0] in self.CAN_FigurePlot.Tsr.CAN_TSR_ID:
+            pass
+            print("tsr: ", self.Result[0])
+            self.Signal_Tsr = CAN_Msg_Analysis().analysis(self.Result[0], bytearray(self.Result[1]), self.TSR_DBC)
+            Index_Tsr = int((self.Result[0] - 0x720))
+            self.CAN_FigurePlot.Tsr.Sign_Position_X[Index_Tsr] = float(self.Signal_Tsr['Sign_Position_X'])
+            self.CAN_FigurePlot.Tsr.Sign_Position_Y[Index_Tsr] = float(self.Signal_Tsr['Sign_Position_Y'])
+            self.CAN_FigurePlot.Tsr.Sign_Position_Z[Index_Tsr] = float(self.Signal_Tsr['Sign_Position_Z'])
 
         else:
             pass
@@ -378,9 +390,16 @@ class MainWindows(QWidget):
     def Lane_Show_Start(self):
         if self.OpenCAN == 'Yes':
             self.CAN_FigurePlot.Timer_Cur_Lane.start(200)
+            self.CAN_FigurePlot.Timer_Cur_Tsr.start(200)
         else:
             QMessageBox.information(self, 'Information', 'PLEASE OPEN CAN DEVICE', QMessageBox.Yes)
-
+    
+    '''绘制TSR的图像'''
+    def Tsr_Show_Start(self):
+        if self.OpenCAN == 'Yes':
+            self.CAN_FigurePlot.Timer_Cur_Tsr.start(200)
+        else:
+            QMessageBox.information(self, 'Information', 'PLEASE OPEN CAN DEVICE', QMessageBox.Yes)
     '''清除所有的图像，停止QTimer绘图并清除图像'''
     def Clear_Show(self):
         self.CAN_FigurePlot.Timer_Stop()

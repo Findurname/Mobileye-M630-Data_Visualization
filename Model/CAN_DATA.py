@@ -76,9 +76,9 @@ class CAN_DATA_TSR:
     CAN_VISION_ONLY_TSR_CONTINUOUS = np.array([0x727])
  
     def __init__(self):
-        self.Sign_Position_X = np.zeros(64)
-        self.Sign_Position_Y = np.zeros(64)
-        self.Sign_Position_Z = np.zeros(64)
+        self.Sign_Position_X = np.zeros(7)
+        self.Sign_Position_Y = np.zeros(7)
+        self.Sign_Position_Z = np.zeros(7)
 
 
 class CAN_DATA_TFL:
