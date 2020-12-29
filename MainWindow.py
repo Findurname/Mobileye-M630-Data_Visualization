@@ -316,14 +316,14 @@ class MainWindows(QWidget):
                 self.Result[0] in self.CAN_FigurePlot.Lane.CAN_Next_Left_Lane0_ID or \
                 self.Result[0] in self.CAN_FigurePlot.Lane.CAN_Next_Right_Lane0_ID:
             
-            print("----- CanID: ", hex(self.Result[0]))
+            # print("----- CanID: ", hex(self.Result[0]))
             self.Signal_Lane = CAN_Msg_Analysis().analysis(self.Result[0], bytearray(self.Result[1]), self.LANE_DBC)
             if self.Result[0] == self.CAN_FigurePlot.Lane.CAN_Ego_Left_Lane_ID[0] or \
                     self.Result[0] == self.CAN_FigurePlot.Lane.CAN_Ego_Right_Lane_ID[0]:
                 
-                if self.Result[0] == self.CAN_FigurePlot.Lane.CAN_Ego_Right_Lane_ID[0]:
-                    self.CAN_FigurePlot.Lane.Clear()
-                    print("---------- Clear!")
+                # if self.Result[0] == self.CAN_FigurePlot.Lane.CAN_Ego_Right_Lane_ID[0]:
+                    # self.CAN_FigurePlot.Lane.Clear()
+                    # print("---------- Clear!")
                 
                 Index_Lane_C023 = int((self.Result[0] - 0x766) / 2)
                 self.CAN_FigurePlot.Lane.Lane_C0[Index_Lane_C023] = float(self.Signal_Lane['Lane_Model_C0']) #Lane_Model_C0)
@@ -377,7 +377,7 @@ class MainWindows(QWidget):
     '''绘制车道线的图像'''
     def Lane_Show_Start(self):
         if self.OpenCAN == 'Yes':
-            self.CAN_FigurePlot.Timer_Cur_Lane.start(1)
+            self.CAN_FigurePlot.Timer_Cur_Lane.start(200)
         else:
             QMessageBox.information(self, 'Information', 'PLEASE OPEN CAN DEVICE', QMessageBox.Yes)
 

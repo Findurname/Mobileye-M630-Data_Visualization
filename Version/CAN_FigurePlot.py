@@ -22,7 +22,7 @@ class CAN_FigurePlot(QWidget):
         self.Obstacle = CAN_Data_Obstacle()
         self.Lane = CAN_Data_Lane()
         self.Tsr = CAN_DATA_TSR()
-        # self.Tfl = CAN_DATA_TFL()
+        self.Tfl = CAN_DATA_TFL()
 
         '''不同属性的点集(人、车、车道线)用不同的曲线来绘制'''
         self.Curve_Generate()
