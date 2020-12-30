@@ -45,6 +45,8 @@ class CAN_Data_Lane:
     # CAN_Next_Right_Lane1_ID = [0x772, 0x773]
     # CAN_Next_Right_Lane2_ID = [0x776, 0x777]
     # CAN_Next_Right_Lane3_ID = [0x77a, 0x77b]
+
+    CAN_LANE_ROAD_EDGE_ID = [0x77c, 0x77d, 0x77e, 0x77f]
     def Clear(self):
         self.Lane_C0 = np.zeros(4).reshape(4,1)
         self.Lane_C1 = np.zeros(4).reshape(4,1)

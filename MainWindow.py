@@ -332,7 +332,7 @@ class MainWindows(QWidget):
                 # print("LKA C0: ", self.CAN_FigurePlot.Lane.Lane_C0[Index_Lane_C023])
                 self.CAN_FigurePlot.Lane.Lane_C2[Index_Lane_C023] = float(self.Signal_Lane['Lane_Model_C2']) #Lane_Model_C2
                 self.CAN_FigurePlot.Lane.Lane_C3[Index_Lane_C023] = float(self.Signal_Lane['Lane_Model_C3']) #Lane_Model_C3
-                print(hex(self.Result[0]),": ", self.Signal_Lane['Lane_Type'])
+                # print(hex(self.Result[0]),": ", self.Signal_Lane['Lane_Type'])
             elif self.Result[0] == self.CAN_FigurePlot.Lane.CAN_Ego_Left_Lane_ID[1] or self.Result[0] == \
                     self.CAN_FigurePlot.Lane.CAN_Ego_Right_Lane_ID[1]:
                 Index_Lane_C1 = int((self.Result[0] - 0x767)/2)
@@ -346,7 +346,7 @@ class MainWindows(QWidget):
                 # print("Next Lane C0: ", self.CAN_FigurePlot.Lane.Lane_C0[Index_Next_Lane_C023])
                 self.CAN_FigurePlot.Lane.Lane_C2[Index_Next_Lane_C023] = float(self.Signal_Lane['Lane_Model_C2']) #Lane_Model_C2
                 self.CAN_FigurePlot.Lane.Lane_C3[Index_Next_Lane_C023] = float(self.Signal_Lane['Lane_Model_C3']) #Lane_Model_C3
-                print(hex(self.Result[0]),": ", self.Signal_Lane['Lane_Type'])
+                # print(hex(self.Result[0]),": ", self.Signal_Lane['Lane_Type'])
             elif self.Result[0] == self.CAN_FigurePlot.Lane.CAN_Next_Left_Lane0_ID[1] or self.Result[0] == \
                     self.CAN_FigurePlot.Lane.CAN_Next_Right_Lane0_ID[1]:
                 Index_Next_Lane_C1 = int((self.Result[0] - 0x76d)/2 + 2)
@@ -360,6 +360,18 @@ class MainWindows(QWidget):
                                                self.CAN_FigurePlot.Lane.Lane_C2, self.CAN_FigurePlot.Lane.Lane_C3)
             # print(self.CAN_FigurePlot.Lane.Lane_Y)
         
+        ## Road Edge
+        elif self.Result[0] in self.CAN_FigurePlot.Lane.CAN_LANE_ROAD_EDGE_ID:
+            pass
+            self.Signal_Lane_RE = CAN_Msg_Analysis().analysis(self.Result[0], bytearray(self.Result[1]), self.LANE_RE_DBC)
+            
+            if self.Result[0] == self.CAN_FigurePlot.Lane.CAN_LANE_ROAD_EDGE_ID[0]:
+                print(hex(self.Result[0]), ": ", self.Signal_Lane_RE["Road_Edge_Type_0"])
+            elif self.Result[0] == self.CAN_FigurePlot.Lane.CAN_LANE_ROAD_EDGE_ID[1]:
+                print(hex(self.Result[0]), ": ", self.Signal_Lane_RE["Road_Edge_Type_1"])
+            else:
+                pass
+
         ## TSR
         elif self.Result[0] in self.CAN_FigurePlot.Tsr.CAN_TSR_ID:
             pass
