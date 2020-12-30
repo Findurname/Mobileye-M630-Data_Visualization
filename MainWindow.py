@@ -92,7 +92,7 @@ class MainWindows(QWidget):
         '''绘图的信号'''
         self.CAN_Presetting.Signal_Ped_Show.connect(self.Ped_Show_Start)
         self.CAN_Presetting.Signal_Veh_Show.connect(self.Veh_Show_Start)
-        # self.CAN_Presetting.Signal_Lane_Show.connect(self.Lane_Show_Start)
+        self.CAN_Presetting.Signal_Lane_Show.connect(self.Lane_Show_Start)
         self.CAN_Presetting.Signal_Lane_Show.connect(self.Tsr_Show_Start)
         self.CAN_Presetting.Signal_Clear_Show.connect(self.Clear_Show)
         '''保存数据信号'''
@@ -332,6 +332,7 @@ class MainWindows(QWidget):
                 # print("LKA C0: ", self.CAN_FigurePlot.Lane.Lane_C0[Index_Lane_C023])
                 self.CAN_FigurePlot.Lane.Lane_C2[Index_Lane_C023] = float(self.Signal_Lane['Lane_Model_C2']) #Lane_Model_C2
                 self.CAN_FigurePlot.Lane.Lane_C3[Index_Lane_C023] = float(self.Signal_Lane['Lane_Model_C3']) #Lane_Model_C3
+                print(hex(self.Result[0]),": ", self.Signal_Lane['Lane_Type'])
             elif self.Result[0] == self.CAN_FigurePlot.Lane.CAN_Ego_Left_Lane_ID[1] or self.Result[0] == \
                     self.CAN_FigurePlot.Lane.CAN_Ego_Right_Lane_ID[1]:
                 Index_Lane_C1 = int((self.Result[0] - 0x767)/2)
@@ -345,6 +346,7 @@ class MainWindows(QWidget):
                 # print("Next Lane C0: ", self.CAN_FigurePlot.Lane.Lane_C0[Index_Next_Lane_C023])
                 self.CAN_FigurePlot.Lane.Lane_C2[Index_Next_Lane_C023] = float(self.Signal_Lane['Lane_Model_C2']) #Lane_Model_C2
                 self.CAN_FigurePlot.Lane.Lane_C3[Index_Next_Lane_C023] = float(self.Signal_Lane['Lane_Model_C3']) #Lane_Model_C3
+                print(hex(self.Result[0]),": ", self.Signal_Lane['Lane_Type'])
             elif self.Result[0] == self.CAN_FigurePlot.Lane.CAN_Next_Left_Lane0_ID[1] or self.Result[0] == \
                     self.CAN_FigurePlot.Lane.CAN_Next_Right_Lane0_ID[1]:
                 Index_Next_Lane_C1 = int((self.Result[0] - 0x76d)/2 + 2)
@@ -361,7 +363,7 @@ class MainWindows(QWidget):
         ## TSR
         elif self.Result[0] in self.CAN_FigurePlot.Tsr.CAN_TSR_ID:
             pass
-            print("tsr: ", self.Result[0])
+            # print("tsr: ", self.Result[0])
             self.Signal_Tsr = CAN_Msg_Analysis().analysis(self.Result[0], bytearray(self.Result[1]), self.TSR_DBC)
             Index_Tsr = int((self.Result[0] - 0x720))
             self.CAN_FigurePlot.Tsr.Sign_Position_X[Index_Tsr] = float(self.Signal_Tsr['Sign_Position_X'])
@@ -389,15 +391,15 @@ class MainWindows(QWidget):
     '''绘制车道线的图像'''
     def Lane_Show_Start(self):
         if self.OpenCAN == 'Yes':
-            self.CAN_FigurePlot.Timer_Cur_Lane.start(200)
-            self.CAN_FigurePlot.Timer_Cur_Tsr.start(200)
+            self.CAN_FigurePlot.Timer_Cur_Lane.start(30)
+            # self.CAN_FigurePlot.Timer_Cur_Tsr.start(200)
         else:
             QMessageBox.information(self, 'Information', 'PLEASE OPEN CAN DEVICE', QMessageBox.Yes)
     
     '''绘制TSR的图像'''
     def Tsr_Show_Start(self):
         if self.OpenCAN == 'Yes':
-            self.CAN_FigurePlot.Timer_Cur_Tsr.start(200)
+            self.CAN_FigurePlot.Timer_Cur_Tsr.start(30)
         else:
             QMessageBox.information(self, 'Information', 'PLEASE OPEN CAN DEVICE', QMessageBox.Yes)
     '''清除所有的图像，停止QTimer绘图并清除图像'''
